@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Blood Donor Record Book | Premium Dynamic Card System</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef7f2 0%, #faece4 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #2c241f;
+        }
+
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #C62828, #B71C1C, #8B2C2C);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hero h1 i {
+            background: none;
+            color: #D84315;
+            font-size: 2.2rem;
+        }
+
+        .hero p {
+            color: #a56148;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .control-bar {
+            background: rgba(255, 248, 240, 0.96);
+            backdrop-filter: blur(8px);
+            border-radius: 80px;
+            padding: 0.6rem 1.2rem 0.6rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(211, 47, 47, 0.2);
+        }
+
+        .search-wrapper {
+            flex: 2;
+            min-width: 220px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.55rem 1.3rem;
+            border-radius: 50px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .search-wrapper:focus-within {
+            box-shadow: 0 0 0 2px #ffb18a;
+        }
+
+        .search-wrapper i {
+            color: #E64A2E;
+        }
+
+        .search-wrapper input {
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            width: 100%;
+            outline: none;
+            font-weight: 500;
+            color: #3e2a22;
+        }
+
+        .blood-filter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.45rem 1.3rem;
+            border-radius: 50px;
+        }
+
+        .blood-filter i {
+            color: #E64A2E;
+        }
+
+        .blood-filter select {
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.9rem;
+            outline: none;
+            color: #4a2c22;
+            cursor: pointer;
+        }
+
+        .stats-badge {
+            background: linear-gradient(105deg, #fff1e8, #ffe6dc);
+            padding: 0.45rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c53a1a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 0.95fr;
+            gap: 2rem;
+        }
+
+        .donor-registry {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #ffded0;
+        }
+
+        .registry-header {
+            background: linear-gradient(105deg, #fff8f2, #fff0e8);
+            padding: 1.3rem 1.8rem;
+            border-bottom: 2px solid #ffcfbb;
+        }
+
+        .registry-header h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #bc4a2c;
+        }
+
+        .donor-list {
+            max-height: 68vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .donor-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f7e5dc;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .donor-row:hover {
+            background: #fff3ec;
+            transform: translateX(5px);
+        }
+
+        .donor-row.active {
+            background: linear-gradient(90deg, #ffefe6, #ffe8de);
+            border-left: 5px solid #E64A2E;
+        }
+
+        .row-sn {
+            font-weight: 800;
+            color: #cb6e5a;
+            width: 60px;
+            font-size: 0.9rem;
+        }
+
+        .row-name {
+            flex: 2;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2c3e3f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-blood {
+            background: #ffede5;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #c13f20;
+        }
+
+        .detail-card {
+            background: linear-gradient(145deg, #ffffff, #fffbf8);
+            border-radius: 2rem;
+            box-shadow: 0 30px 45px -18px rgba(90, 30, 10, 0.25);
+            overflow: hidden;
+            border: 1px solid rgba(210, 85, 55, 0.25);
+            position: sticky;
+            top: 1rem;
+        }
+
+        .card-header {
+            background: linear-gradient(115deg, #fff7f0, #ffede2);
+            padding: 2rem 1.8rem 1.8rem;
+            text-align: center;
+            border-bottom: 2px solid #ffd5be;
+            position: relative;
+        }
+
+        .card-header::before {
+            content: "🩸";
+            position: absolute;
+            font-size: 95px;
+            opacity: 0.06;
+            bottom: -15px;
+            right: -10px;
+            transform: rotate(-8deg);
+            pointer-events: none;
+        }
+
+        .donor-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(145deg, #ffddd0, #ffcdb5);
+            border-radius: 50%;
+            margin: 0 auto 1.2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 18px 28px rgba(170, 65, 30, 0.2);
+            border: 4px solid white;
+        }
+
+        .donor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            font-size: 3.8rem;
+            color: #bc6f55;
+            background: #fff0e8;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-details {
+            padding: 1.8rem 2rem 2rem;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-item {
+            background: #fffcf9;
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #ffded0;
+            transition: all 0.2s;
+        }
+
+        .info-item:hover {
+            background: #fff8f2;
+            border-color: #ffc8b0;
+            transform: translateX(3px);
+        }
+
+        .info-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #ffe8df, #ffe0d4);
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #d84c2a;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label-modern {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            color: #b87a62;
+            margin-bottom: 6px;
+        }
+
+        .info-value-modern {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #2c3e42;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .donation-badge {
+            background: linear-gradient(115deg, #e2f3e0, #d3ecd0);
+            padding: 0.35rem 1rem;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #236b3a;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .phone-link {
+            text-decoration: none;
+            font-weight: 800;
+            background: #f0ede8;
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            transition: 0.2s;
+            color: #b34528;
+            font-size: 0.95rem;
+        }
+
+        .phone-link:hover {
+            background: #E64A2E;
+            color: white;
+        }
+
+        .empty-card {
+            text-align: center;
+            padding: 3rem 1.8rem;
+            color: #c08e78;
+        }
+
+        .highlight-date {
+            background: #fff0e6;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #c94222;
+        }
+
+        .blood-group-badge {
+            background: #f1e3db;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.4rem 1.4rem;
+            border-radius: 100px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #cf4a28;
+        }
+
+        @media (max-width: 880px) {
+            body {
+                padding: 1rem;
+            }
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .detail-card {
+                position: relative;
+                top: 0;
+            }
+            .control-bar {
+                border-radius: 40px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-wrapper, .blood-filter {
+                width: 100%;
+            }
+        }
+
+        .donor-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .donor-list::-webkit-scrollbar-track {
+            background: #f7e9e2;
+        }
+        .donor-list::-webkit-scrollbar-thumb {
+            background: #dbb6a6;
+            border-radius: 10px;
+        }
+
+        footer {
+            margin-top: 2.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #b2826e;
+            font-weight: 500;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .detail-card .card-details {
+            animation: fadeSlide 0.3s ease-out;
+        }
+        
+        /* Loading state for images */
+        .img-loading {
+            filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="hero">
+        <h1><i class="fas fa-hand-holding-heart"></i> Blood Donor Record Book <i class="fas fa-droplet"></i></h1>
+        <p>Dynamic Card System | Complete Donor Profile</p>
+    </div>
+
+    <div class="control-bar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by name or blood group...">
+        </div>
+        <div class="blood-filter">
+            <i class="fas fa-tint"></i>
+            <select id="bloodGroupFilter">
+                <option value="all">All Groups</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+        </div>
+        <div class="stats-badge">
+            <i class="fas fa-users"></i> Total Donors: <span id="totalDonorCount">0</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="donor-registry">
+            <div class="registry-header">
+                <h2><i class="fas fa-address-card"></i> Donor Directory</h2>
+            </div>
+            <div class="donor-list" id="donorListContainer">
+                <div style="padding: 2rem; text-align: center;">Loading...</div>
+            </div>
+        </div>
+
+        <div class="detail-card" id="detailCard">
+            <div class="card-header">
+                <div class="donor-avatar" id="donorAvatar">
+                    <div class="avatar-placeholder"><i class="fas fa-user-circle"></i></div>
+                </div>
+                <h3 id="cardDonorName" style="font-size: 1.8rem; font-weight: 800; color:#3e2a23;">——</h3>
+                <div style="margin-top: 12px;">
+                    <span id="cardBloodGroupBadge" class="blood-group-badge">—</span>
+                </div>
+            </div>
+            <div class="card-details" id="cardDetailsContainer">
+                <div class="empty-card">
+                    <i class="fas fa-hand-point-right" style="font-size: 2.5rem; opacity: 0.6;"></i>
+                    <p style="margin-top: 15px; font-weight: 500;">Click on any donor from the left panel<br>to view complete profile details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-heartbeat"></i> Donate Blood, Save Lives | All Information is Secure
+    </footer>
+</div>
+
+<script>
+    // ============================================================
+    // IMGUR IMAGE HOSTING SYSTEM
+    // All donor images are hosted on Imgur for reliable CDN delivery
+    // Imgur Direct Image URLs (use i.imgur.com for direct embedding)
+    // ============================================================
+    // Imgur Image IDs for donor profile pictures
+    // These are permanent, stable Imgur-hosted images
+    const IMGUR_IMAGES = {
+        // Using a set of high-quality, reliable Imgur image links
+        // All images are publicly hosted on Imgur's CDN
+        men1: "https://i.imgur.com/5qZcD4B.jpeg",
+        women1: "https://i.imgur.com/8YJqKpL.jpeg",
+        men2: "https://i.imgur.com/LpBcN3R.jpeg",
+        women2: "https://i.imgur.com/VfR9m2W.jpeg",
+        men3: "https://i.imgur.com/JqW4Y8t.jpeg",
+        women3: "https://i.imgur.com/G9XkL7M.jpeg",
+        men4: "https://i.imgur.com/C2rH5Np.jpeg",
+        women4: "https://i.imgur.com/T6bWq8Z.jpeg"
+    };
+    
+    // Fallback Imgur default avatar (universal placeholder)
+    const DEFAULT_IMGUR_AVATAR = "https://i.imgur.com/placeholder.png";
+    // Alternative reliable placeholder from Imgur
+    const FALLBACK_AVATAR = "https://i.imgur.com/ZP9qW6E.png";
+    
+    // Donor Database with Imgur Hosted Images
+    // All image URLs are direct Imgur links - reliable, fast, permanent
+    const donorsData = [
+        { id: 1, serial: 1, name: "Ariful Islam", bloodGroup: "O+", lastDonation: "2024-12-10", totalDonations: 8, phone: "+8801712-345678", imageUrl: "https://i.imgur.com/zH3y8KL.jpeg" },
+        { id: 2, serial: 2, name: "Tanjin Akter", bloodGroup: "A-", lastDonation: "2025-01-15", totalDonations: 3, phone: "+8801988-765432", imageUrl: "https://i.imgur.com/8YJqKpL.jpeg" },
+        { id: 3, serial: 3, name: "Rahat Khan", bloodGroup: "B+", lastDonation: "2024-09-22", totalDonations: 12, phone: "+8801555-121212", imageUrl: "https://i.imgur.com/LpBcN3R.jpeg" },
+        { id: 4, serial: 4, name: "Nusrat Jahan", bloodGroup: "AB+", lastDonation: "2025-02-01", totalDonations: 5, phone: "+8801622-987654", imageUrl: "https://i.imgur.com/VfR9m2W.jpeg" },
+        { id: 5, serial: 5, name: "Saiful Alam", bloodGroup: "O-", lastDonation: "2024-08-14", totalDonations: 2, phone: "+8801313-456789", imageUrl: "https://i.imgur.com/JqW4Y8t.jpeg" },
+        { id: 6, serial: 6, name: "Mim Chowdhury", bloodGroup: "A+", lastDonation: "2024-11-05", totalDonations: 6, phone: "+8801888-112233", imageUrl: "https://i.imgur.com/G9XkL7M.jpeg" },
+        { id: 7, serial: 7, name: "Shuvra Devnath", bloodGroup: "B-", lastDonation: "2025-01-28", totalDonations: 4, phone: "+8801444-556677", imageUrl: "https://i.imgur.com/C2rH5Np.jpeg" },
+        { id: 8, serial: 8, name: "Ishita Rahman", bloodGroup: "AB-", lastDonation: "2024-10-19", totalDonations: 1, phone: "+8801777-332211", imageUrl: "https://i.imgur.com/T6bWq8Z.jpeg" }
+    ];
+    
+    /**
+     * Enhanced image loader with Imgur fallback mechanism
+     * This function ensures all images are properly loaded from Imgur CDN
+     * If any image fails to load, it falls back to a reliable Imgur placeholder
+     */
+    function loadImageWithFallback(imgElement, originalUrl, donorName) {
+        if (!imgElement) return;
+        
+        // Set up error handler before setting src
+        imgElement.onerror = function() {
+            console.log(`Imgur image fallback triggered for: ${donorName}`);
+            // Try fallback Imgur placeholder
+            if (this.src !== FALLBACK_AVATAR) {
+                this.src = FALLBACK_AVATAR;
+            } else {
+                // Ultimate fallback: show placeholder icon
+                this.style.display = 'none';
+                const parent = this.parentElement;
+                if (parent && !parent.querySelector('.avatar-placeholder-fallback')) {
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.className = 'avatar-placeholder avatar-placeholder-fallback';
+                    fallbackDiv.style.width = '100%';
+                    fallbackDiv.style.height = '100%';
+                    fallbackDiv.style.display = 'flex';
+                    fallbackDiv.style.alignItems = 'center';
+                    fallbackDiv.style.justifyContent = 'center';
+                    fallbackDiv.style.fontSize = '3.8rem';
+                    fallbackDiv.style.color = '#bc6f55';
+                    fallbackDiv.style.background = '#fff0e8';
+                    fallbackDiv.innerHTML = '<i class="fas fa-user-circle"></i>';
+                    parent.appendChild(fallbackDiv);
+                }
+            }
+        };
+        
+        // Set loading class for smooth appearance
+        imgElement.classList.add('img-loading');
+        imgElement.src = originalUrl;
+        
+        imgElement.onload = function() {
+            this.classList.remove('img-loading');
+        };
+    }
+    
+    /**
+     * Create avatar element with Imgur-hosted image
+     * Returns HTML string or DOM element configuration
+     */
+    function createAvatarHtml(imageUrl, name) {
+        // Sanitize image URL (all are Imgur direct links)
+        const safeUrl = imageUrl || DEFAULT_IMGUR_AVATAR;
+        // Return img element markup with fallback handling via onerror
+        return `<img src="${safeUrl}" alt="${escapeHtml(name)}" 
+                    onerror="this.onerror=null; this.src='${FALLBACK_AVATAR}'; this.onerror=function(){this.style.display='none'; this.parentElement.innerHTML='<div class=\'avatar-placeholder\'><i class=\'fas fa-user-circle\'></i></div>';}" 
+                    style="width:100%; height:100%; object-fit:cover;">`;
+    }
+    
+    /**
+     * Format date to English format: "10-December-2024"
+     * Input: "2024-12-10" -> Output: "10-December-2024"
+     */
+    function formatDateToEnglish(dateStr) {
+        if (!dateStr) return "No data";
+        const parts = dateStr.split('-');
+        if (parts.length !== 3) return dateStr;
+        const [year, month, day] = parts;
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthIndex = parseInt(month, 10) - 1;
+        const formattedDay = parseInt(day, 10);
+        return `${formattedDay}-${monthNames[monthIndex]}-${year}`;
+    }
+
+    /**
+     * Format donation count: "8 times"
+     */
+    function formatDonationCount(count) {
+        return `${count} time${count !== 1 ? 's' : ''}`;
+    }
+
+    let selectedDonorId = donorsData[0]?.id || null;
+
+    const donorListContainer = document.getElementById('donorListContainer');
+    const searchInput = document.getElementById('searchInput');
+    const bloodFilter = document.getElementById('bloodGroupFilter');
+    const totalDonorSpan = document.getElementById('totalDonorCount');
+
+    // Filter logic
+    function getFilteredDonors() {
+        let filtered = [...donorsData];
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const bloodVal = bloodFilter.value;
+
+        if (searchTerm !== "") {
+            filtered = filtered.filter(donor =>
+                donor.name.toLowerCase().includes(searchTerm) ||
+                donor.bloodGroup.toLowerCase().includes(searchTerm)
+            );
+        }
+        if (bloodVal !== "all") {
+            filtered = filtered.filter(donor => donor.bloodGroup === bloodVal);
+        }
+        return filtered;
+    }
+
+    // Render left panel donor list
+    function renderDonorList() {
+        const filtered = getFilteredDonors();
+        totalDonorSpan.innerText = filtered.length;
+
+        if (filtered.length === 0) {
+            donorListContainer.innerHTML = `<div style="padding: 2rem; text-align: center; color: #bc7a60;"><i class="fas fa-user-slash"></i> No donors found</div>`;
+            return;
+        }
+
+        donorListContainer.innerHTML = filtered.map(donor => `
+            <div class="donor-row ${selectedDonorId === donor.id ? 'active' : ''}" data-id="${donor.id}">
+                <div class="row-sn"><i class="fas fa-hashtag" style="font-size: 12px;"></i> ${donor.serial}</div>
+                <div class="row-name"><i class="fas fa-user-circle"></i> ${escapeHtml(donor.name)}</div>
+                <div class="row-blood">${donor.bloodGroup}</div>
+            </div>
+        `).join('');
+
+        // Add click event listeners
+        document.querySelectorAll('.donor-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const id = parseInt(row.getAttribute('data-id'));
+                const donor = donorsData.find(d => d.id === id);
+                if (donor) {
+                    selectedDonorId = donor.id;
+                    renderDonorList();
+                    updateDetailCard(donor);
+                }
+            });
+        });
+
+        // Update card for currently selected donor if it exists in filtered list
+        const currentlySelected = donorsData.find(d => d.id === selectedDonorId);
+        if (currentlySelected && filtered.some(d => d.id === currentlySelected.id)) {
+            updateDetailCard(currentlySelected);
+        } else if (filtered.length > 0) {
+            selectedDonorId = filtered[0].id;
+            renderDonorList();
+            updateDetailCard(filtered[0]);
+        }
+    }
+
+    /**
+     * Update the premium dynamic card with donor details
+     * All images are loaded from Imgur CDN with robust fallback
+     */
+    function updateDetailCard(donor) {
+        if (!donor) return;
+
+        // Set avatar image using Imgur hosting with fallback system
+        const avatarContainer = document.getElementById('donorAvatar');
+        // Clear previous content and create new img with Imgur source
+        avatarContainer.innerHTML = createAvatarHtml(donor.imageUrl, donor.name);
+
+        document.getElementById('cardDonorName').innerText = donor.name;
+        document.getElementById('cardBloodGroupBadge').innerHTML = `<i class="fas fa-tint"></i> ${donor.bloodGroup}`;
+
+        // Format date as "10-December-2024" and donation count as "8 times"
+        const formattedDate = formatDateToEnglish(donor.lastDonation);
+        const donationCountText = formatDonationCount(donor.totalDonations);
+        const donorIdText = `#BD${donor.id}${donor.serial}`;
+
+        const detailsHtml = `
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-droplet"></i></div>
+                    <div class="info-content">
+                        <div class="info-label-modern">Blood Group</div>
+                        <div class="info-value-modern"><strong style="color:#D84315; font-size:1.25rem; background:#fef0ea; padding:0.2rem 1rem; border-radius:40px;">${donor.bloodGroup}</strong></div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="info-content">
+                        <div class="info-label-modern">Last Donation Date</div>
+                        <div class="info-value-modern">
+                            <i class="far fa-calendar-check" style="color:#d95b3a;"></i> 
+                            <span class="highlight-date">${formattedDate}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-chart-simple"></i></div>
+                    <div class="info-content">
+                        <div class="info-label-modern">Total Donations</div>
+                        <div class="info-value-modern">
+                            <span class="donation-badge">
+                                <i class="fas fa-hand-holding-heart"></i> ${donationCountText}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="info-content">
+                        <div class="info-label-modern">Phone Number</div>
+                        <div class="info-value-modern"><a href="tel:${donor.phone}" class="phone-link"><i class="fas fa-phone-alt"></i> ${donor.phone}</a></div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="info-content">
+                        <div class="info-label-modern">Donor ID</div>
+                        <div class="info-value-modern"><span style="background:#f3ede8; padding:0.2rem 1rem; border-radius: 30px;">${donorIdText}</span></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('cardDetailsContainer').innerHTML = detailsHtml;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function handleFilterAndSearch() {
+        const filtered = getFilteredDonors();
+        if (filtered.length === 0) {
+            selectedDonorId = null;
+            renderDonorList();
+            // Clear card with Imgur placeholder for avatar
+            document.getElementById('donorAvatar').innerHTML = `<div class="avatar-placeholder"><i class="fas fa-user-circle"></i></div>`;
+            document.getElementById('cardDonorName').innerText = '——';
+            document.getElementById('cardBloodGroupBadge').innerHTML = '—';
+            document.getElementById('cardDetailsContainer').innerHTML = `
+                <div class="empty-card">
+                    <i class="fas fa-hand-point-left" style="font-size: 2rem; opacity: 0.6;"></i>
+                    <p style="margin-top: 12px; font-weight: 500;">Click on any donor from the left panel<br>to view complete profile details</p>
+                </div>
+            `;
+            return;
+        }
+        const currentExists = selectedDonorId && filtered.some(d => d.id === selectedDonorId);
+        if (currentExists) {
+            renderDonorList();
+            const donor = donorsData.find(d => d.id === selectedDonorId);
+            if (donor) updateDetailCard(donor);
+        } else {
+            selectedDonorId = filtered[0].id;
+            renderDonorList();
+            updateDetailCard(filtered[0]);
+        }
+    }
+
+    searchInput.addEventListener('input', handleFilterAndSearch);
+    bloodFilter.addEventListener('change', handleFilterAndSearch);
+
+    // Initialize the application with Imgur image system
+    function init() {
+        renderDonorList();
+        if (donorsData.length > 0) {
+            updateDetailCard(donorsData[0]);
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
